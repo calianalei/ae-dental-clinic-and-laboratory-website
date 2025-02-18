@@ -1,4 +1,4 @@
-.schedule {
+.schedule, .patientInfoHist {
     margin-top: 75px;
 }
 
@@ -67,10 +67,6 @@
     text-align: left;
   }
   
-  th {
-
-  }
-  
   td {
     background-color: #D9D9D9;
     color: rgba(0, 0, 0, 0.6);
@@ -89,4 +85,31 @@
   .checkbox-container input {
     margin-right: 5px;
   }
+
+.patientInfoHist .outside-table .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patientInfoHist .outside-table .header .left h1 {
+  font-size: x-large;
+  font-weight: bold;
+  color: white;
+
+}
+
+.patientInfoHist .outside-table .header .right button{
+  border-radius: 50px;
+  width: 200px;
+  height: 30px;
+  background: #D9D9D9;
+  color: #5D6E7E;
+  border: none;
+}
+
+.patientInfoHist .outside-table .header .right button:hover{
+  background: #999999;
+  color: #fff;
+}
   
