@@ -1,0 +1,233 @@
+/* HOMEPAGE */
+.home {
+    margin-top: 75px;
+}
+
+.home .top {
+    display: flex;
+    flex-direction: row;
+    background: linear-gradient(to bottom, #000000, #4C4C4C, #C0C0C0);
+    padding: 20px;
+    align-items: center; 
+    justify-content: space-between;
+    z-index: 1;
+    height: 400px;
+    overflow: hidden;
+}
+
+.home .top .circle-background {
+    position: relative;
+    width: 595px;
+    height: 506.01px; 
+    z-index: 1;
+    margin-top: 80px;
+}
+
+.home .top .circle-background::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px; 
+    height: 400px; 
+    background-color: #E0E0E0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.home .top .circle-background img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    z-index: 1;
+}
+
+.home .top .top-text {
+    margin-left: 50px;
+    padding: 20px;
+    justify-content: center;
+    z-index: 2; 
+}
+
+.home .top .top-text h1 {
+    color: #ffffff; 
+    font-weight: 1000;
+    font-size: xx-large;
+}
+
+.home .top .top-text h3 {
+    color: #ffffff; 
+    font-size: large;
+    font-weight: 400;
+}
+
+@media (max-width: 800px) {
+    .home {
+        margin-top: 150px;
+    }
+    .home .top {
+        flex-direction: column; 
+        height: auto; 
+        padding: 20px 10px;
+    }
+
+    .home .top .circle-background {
+        display: none; 
+    }
+
+    .home .top .top-text {
+        margin-left: 0;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .home .top .top-text h1 {
+        font-size: 28px; 
+    }
+
+    .home .top .top-text h3 {
+        font-size: 18px; 
+    }
+}
+
+.home .mid {
+    height: auto;
+    margin: 5% 25% 5% 25%;
+    text-align: center; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .mid h2 {
+    font-weight: 1000;
+    font-size: xx-large;
+    text-align: center;
+}
+
+.home .mid p {
+    text-align: center; 
+}
+
+.home .mid button {
+    align-self: center; 
+    margin-top: 10px; 
+    background: #7393B3;
+}
+
+.home .mid button:hover {
+    background: #688098;
+}
+
+.home .bot {
+    display: flex;
+    gap: 0px;
+    margin: 40px;
+    align-items: center;
+    height: auto;
+    gap: 50px;
+}
+
+.home .bot .nav-pics {
+    display: flex;
+    gap: 1px;
+    margin: 10px;
+    justify-content: center;
+    position: relative; /* Added for proper absolute positioning */
+}
+
+.home .bot .nav-pics div {
+    background: #E0E0E0;
+    border-radius: 50%;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.home .bot .nav-pics .circle-design1 {
+    position: absolute;
+    top: 80px;
+    right: 60%;
+    opacity: 30%;
+}
+
+.home .bot .nav-pics .circle-design2 {
+    position: absolute;
+    bottom: 80px;
+    left: 45%;
+    opacity: 30%;
+}
+
+.home .bot .nav-pics div:nth-child(43) {
+    margin-top: -60px;
+}
+
+.home .bot .nav-pics div:nth-child(4) {
+    margin-top: 60px;
+}
+
+.home .bot .nav-pics img {
+    border-radius: 50%;
+    width: 95%;
+    height: 95%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.home .bot .nav-pics div:hover img {
+    opacity: 0.3;
+}
+
+/* Hover text style */
+.home .bot .nav-pics .hover-text {
+    position: absolute;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0;
+    visibility: hidden;
+    text-align: center;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.home .bot .nav-pics div:hover .hover-text {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s 0s;
+}
+
+.home .bot .bot-text {
+    margin-right: 5%;
+}
+
+.home .bot .bot-text h2 {
+    font-weight: 1000;
+    font-size: xx-large;
+    text-align: end;
+}
+
+.home .bot .bot-text p {
+    text-align: end; 
+}
+
+@media (max-width: 700px) {
+    .home .bot .bot-text {
+        display: none;
+    }
+    .home .bot .nav-pics {
+        display: flex;
+        justify-content: center;
+        align-items: center;    
+        gap: 20px;
+    }
+}
