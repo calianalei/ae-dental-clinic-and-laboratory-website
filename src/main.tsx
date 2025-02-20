@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <>
       <AdminHeader />
-      <Admin />
+      <LaboratorySL />
       <Footer />
     </>
     
