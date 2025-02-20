@@ -1,5 +1,9 @@
 import './service-listings.css';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import Header from './admin-header';
+import React, { useState } from "react";
+import Schedule from './admin'; // Ensure the correct path
+import PatientInfoHistory from './admin'; // Ensure the correct path
 
 const services = [
   {
@@ -99,21 +103,39 @@ function ServiceDrawer({ service }) {
 }
 
 function LaboratorySL() {
+    const [activeTab, setActiveTab] = React.useState<'schedule' | 'patientInfo'>('schedule'); // Track active tab
+    const [activeComponent, setActiveComponent] = useState<'schedule' | 'patientInfo'>('schedule');
+
+  const handleScheduleClick = () => {
+    setActiveComponent('schedule');
+  };
+
+  const handlePatientInfoClick = () => {
+    setActiveComponent('patientInfo');
+  };
+
   return (
-    <div className="container-sl">
-      <div className="top">
-        <h1>Good Casts Lead to Good Prosthesis</h1>
-        <p>At AE Dental Clinic & Laboratory, we specialize in high-quality dental prosthetics, including dentures, crowns, bridges, and more. Our skilled technicians use the latest materials and technology to ensure each piece is crafted to fit perfectly, providing comfort, durability, and a natural appearance.</p>
-      </div>
-      <div className="bottom">
-        <h1>Laboratory Services</h1>
-        <div className="collage">
-          {services.map((service, index) => (
-            <ServiceDrawer key={index} service={service} />
-          ))}
+    <div>
+      <Header 
+  onScheduleClick={() => setActiveComponent('schedule')} 
+  onPatientInfoClick={() => setActiveComponent('patientInfo')} 
+/>
+
+      <div className="container-sl">
+        <div className="top">
+          <h1>Good Casts Lead to Good Prosthesis</h1>
+          <p>At AE Dental Clinic & Laboratory, we specialize in high-quality dental prosthetics, including dentures, crowns, bridges, and more. Our skilled technicians use the latest materials and technology to ensure each piece is crafted to fit perfectly, providing comfort, durability, and a natural appearance.</p>
+        </div>
+        <div className="bottom">
+          <h1>Laboratory Services</h1>
+          <div className="collage">
+            {services.map((service, index) => (
+              <ServiceDrawer key={index} service={service} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+   </div>  
   );
 }
 
