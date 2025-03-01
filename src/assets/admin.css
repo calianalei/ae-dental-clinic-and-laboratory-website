@@ -10,13 +10,16 @@
     margin-top: 100px;
     margin-bottom: 20px;
     border-radius: 0 0 20px 20px;
+    
 }
 
 .header {
     background: #5D6E7E;
     height: 60px;
     padding: 7px 15px;
+    display: flex;
 }
+
 .schedule .outside-table .header .left {
     display: flex;
     flex-direction: row;
@@ -44,6 +47,11 @@
     font-weight: 500;
     font-size: small;
     margin-left: 14px;
+}
+
+.schedule .outside-table .header .right {
+  justify-self: end;
+
 }
 
 .schedule .outside-table .body .paging {
