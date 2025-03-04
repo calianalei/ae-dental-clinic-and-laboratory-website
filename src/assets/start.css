@@ -1,6 +1,4 @@
 .auth-container {
-  margin-top: 75px;
-  margin-bottom: 50px;
   justify-items: center;
   align-items: center;
 }
@@ -10,8 +8,7 @@
   padding: 0;
   box-shadow: none;
   background: transparent;
-  margin-top: 100px;
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 .card-content {

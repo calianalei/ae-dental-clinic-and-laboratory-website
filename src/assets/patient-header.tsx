@@ -1,14 +1,20 @@
-import { useState } from 'react';
-import logo from './media/logo.png';
-import user from './media/user.png';
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
+import './style.css'
+import logo from './media/logo.png'
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar"
+import { useState } from 'react'
+import user from './media/user.png'
 
-function Header({ onPopoverToggle }: { onPopoverToggle: () => void }) {
+function PatientHeader({
+  onScheduleClick,
+  onPatientInfoClick
+}: {
+  onScheduleClick: () => void;
+  onPatientInfoClick: () => void;
+}) {
   const [openMenu, setOpenMenu] = useState(false);
 
   const handleMenuToggle = () => {
     setOpenMenu(!openMenu);
-    onPopoverToggle(); // This will toggle the visibility of the header
   };
 
   return (
@@ -24,7 +30,7 @@ function Header({ onPopoverToggle }: { onPopoverToggle: () => void }) {
           </MenubarMenu>
           <MenubarMenu>
             <MenubarTrigger>Services</MenubarTrigger>
-            <MenubarContent className="menubarcontent">
+            <MenubarContent>
               <MenubarItem>
                 Dental Care Services
               </MenubarItem>
@@ -39,23 +45,11 @@ function Header({ onPopoverToggle }: { onPopoverToggle: () => void }) {
         </Menubar>
         
         <div className="login">
-          <Menubar className="menu">
-            <MenubarMenu>
-              <MenubarTrigger onClick={handleMenuToggle}>
-                <img src={user} alt="User Avatar" />
-              </MenubarTrigger>
-              {openMenu && (
-                <MenubarContent>
-                  <MenubarItem>Schedule</MenubarItem>
-                  <MenubarItem>Patient Info & History</MenubarItem>
-                </MenubarContent>
-              )}
-            </MenubarMenu>
-          </Menubar>
+          <img src={user} alt="User Avatar" onClick={handleMenuToggle} className="user-icon" />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Header;
+export default PatientHeader;

@@ -1,0 +1,103 @@
+.patient-dashboard {
+}
+.box {
+    width: 100%;
+    margin: auto;
+    height: auto;
+    padding: 50px;
+    justify-content: center; 
+    align-items: center;
+    background: linear-gradient(to bottom, black, #4c4c4c, #c0c0c0);
+    color: white;
+    text-align: center;
+}
+
+.box h1 {
+    font-weight: bolder;
+    font-size: xx-large;
+}
+
+.box p {
+    font-weight: 400;
+    font-size: small;
+}
+
+.box h2 {
+    font-weight: 400;
+    font-size: smaller;
+}
+
+.box .appointment-button {
+    border-radius: 50px;
+    margin-top: 10px;
+}
+
+.box .appointment-button:hover {
+    background-color: #c0c0c0;
+    color: black;
+}
+
+.box .appointment-button:active {
+    background-color: #D9D9D9;
+    color: black;
+}
+
+.appointments {
+    margin: 50px;
+    text-align: center;
+}
+
+.appointments h2 {
+    margin-bottom: 20px;
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+.appointments .table {
+    justify-self: center;
+    width: 80%;
+    overflow-x: auto;
+}
+
+.appointments table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.appointments tbody tr {
+    background-color: #D9D9D9;
+    border-radius: 20px;
+}
+
+.appointments td, .appointments th {
+    padding: 10px;
+    text-align: center;
+}
+
+.appointments tbody td {
+    border-bottom: 5px solid white; 
+}
+
+.appointments .edit-btn {
+    border-radius: 50px;
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.appointments .cancel-btn {
+    border-radius: 50px;
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.edit-btn:hover, .cancel-btn:hover {
+    background-color: black;
+    color: #f1f1f1;
+}
+
+.edit-btn:active, .cancel-btn:active {
+    background-color: #4C4C4C;
+    color: white;
+}
+
+

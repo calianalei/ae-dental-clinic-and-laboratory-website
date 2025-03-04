@@ -5,13 +5,14 @@
     align-items: center;
     max-width: 100%; /* Adapt to full viewport width */
     height: 75px;
-    position: fixed;
-    top: 0;
+    position: sticky;
     left: 0;
     background-color: #433F40;
     padding: 10px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    overflow: visible;
+    top: 0;
 }
 
 .container .left {
@@ -51,6 +52,12 @@
 
 .container .right .menubar button:hover {
     text-decoration: underline;
+}
+
+.container .right .menubar .menubarcontent {
+    position: absolute;
+    top: 100%;
+    z-index: 9999;
 }
 
 .container .right .login {
