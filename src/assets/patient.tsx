@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./patient.css";
 import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const patientData = {
   id: "12345",
@@ -84,12 +86,17 @@ const PatientHeader = ({ name }: { name: string }) => {
               placeholder="Name"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
+              className="input-name"
             />
             <div className="grid grid-cols-2 gap-2">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full text-left font-normal">
-                    {birthday ? format(birthday, "PPP") : "Pick a date"}
+                  <Button
+                      className={cn(
+                        "w-[185px] justify-start text-left font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]"
+                      )}>
+                      <CalendarIcon />
+                      {birthday ? format(birthday, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent align="start">
@@ -97,7 +104,7 @@ const PatientHeader = ({ name }: { name: string }) => {
                 </PopoverContent>
               </Popover>
               <Select onValueChange={(value) => console.log("Selected gender:", value)}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="select-sex">
                   <SelectValue placeholder="Sex" />
                 </SelectTrigger>
                 <SelectContent>
@@ -111,7 +118,7 @@ const PatientHeader = ({ name }: { name: string }) => {
             </div>
             <h3>Appointment Details</h3>
             <Select onValueChange={(value) => setProcedure(value)}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="select-proc-doc">
                 <SelectValue placeholder="Procedure" />
               </SelectTrigger>
                 <SelectContent>
@@ -125,16 +132,20 @@ const PatientHeader = ({ name }: { name: string }) => {
             <div className="grid grid-cols-2 gap-2">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full text-left font-normal">
-                        {date ? format(date, "PPP") : "Pick a date"}
-                        </Button>
+                        <Button
+                          className={cn(
+                            "w-[185px] justify-start text-left font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]"
+                          )}>
+                          <CalendarIcon />
+                          {birthday ? format(birthday, "PPP") : <span>Pick a date</span>}
+                         </Button>
                     </PopoverTrigger>
                     <PopoverContent align="start" className="popover-content">
                         <Calendar mode="single" selected={date} onSelect={setDate} />
                     </PopoverContent>
                 </Popover>
               <Select onValueChange={setTime}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-[185px] text-left font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]">
                   <SelectValue placeholder="Time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,7 +158,7 @@ const PatientHeader = ({ name }: { name: string }) => {
               </Select>
             </div>
             <Select onValueChange={setDoctor}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="select-proc-doc">
                 <SelectValue placeholder="Doctor" />
               </SelectTrigger>
               <SelectContent>
@@ -158,7 +169,7 @@ const PatientHeader = ({ name }: { name: string }) => {
               </SelectContent>
             </Select>
             <h3>Additional Information</h3>
-            <Textarea placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} style={{ minHeight: '100px' }}/>
+            <Textarea placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} className="notes-text-area"/>
           </div>
           <DialogFooter>
             <Button type="submit" disabled={!patientName || !date || !time || !procedure || !doctor}>
@@ -304,10 +315,10 @@ const AppointmentsList = ({
             </DialogHeader>
             <div className="grid gap-2 py-2">
               <h3>Personal Details</h3>
-              <Label id="name">{patientData.name}</Label>
+              <Label id="name" style={{ fontWeight: 'bold'}}>{patientData.name}</Label>
               <h3>Appointment Details</h3>
               <Select value={procedure} onValueChange={setProcedure}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="select-proc-doc">
                   <SelectValue>{procedure || "Procedure"}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -324,16 +335,20 @@ const AppointmentsList = ({
               <div className="grid grid-cols-2 gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full text-left font-normal">
-                      {date ? format(date, "PPP") : "Pick a date"}
-                    </Button>
+                  <Button
+                        className={cn(
+                          "w-[185px] justify-start text-left font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]"                        )}
+                      >
+                        <CalendarIcon />
+                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      </Button>
                   </PopoverTrigger>
                   <PopoverContent align="start" className="popover-content">
                     <Calendar mode="single" selected={date} onSelect={setDate} />
                   </PopoverContent>
                 </Popover>
                 <Select value={time} onValueChange={setTime}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className={cn("w-[180px] text-left font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}>
                     <SelectValue placeholder="Time" />
                   </SelectTrigger>
                   <SelectContent>
@@ -346,7 +361,7 @@ const AppointmentsList = ({
                 </Select>
               </div>
               <Select value={doctor} onValueChange={setDoctor}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="select-proc-doc">
                   <SelectValue placeholder="Doctor" />
                 </SelectTrigger>
                 <SelectContent>
@@ -361,7 +376,7 @@ const AppointmentsList = ({
                 placeholder="Notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                style={{ minHeight: "100px" }}
+                className="notes-text-area"
               />
             </div>
             <DialogFooter>

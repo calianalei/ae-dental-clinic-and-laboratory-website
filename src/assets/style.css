@@ -151,13 +151,9 @@
 
 .footer .fright {
     display: flex;
-    flex-direction: column;
-}
-
-.footer .fright .nav-buttons {
-    display: flex;
     flex-direction: row;
 }
+
 
 .footer .fright .nav-buttons button {
     background: none;

@@ -6,7 +6,6 @@
     height: auto;
     background: rgba(217, 217, 217, 0.2);
     justify-self: center;
-    margin-top: 100px;
     margin-bottom: 20px;
     border-radius: 0 0 20px 20px;
     
@@ -16,7 +15,8 @@
     background: #5D6E7E;
     height: 60px;
     padding: 7px 15px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
 }
 
 .schedule .outside-table .header .left {
@@ -50,7 +50,6 @@
 
 .schedule .outside-table .header .right {
   justify-self: end;
-
 }
 
 .schedule .outside-table .body .paging {
@@ -105,18 +104,38 @@
   color: white;
 
 }
-
-.patientInfoHist .outside-table .header .right button{
-  border-radius: 50px;
-  width: 200px;
-  height: 30px;
-  background: #D9D9D9;
-  color: #5D6E7E;
-  border: none;
-}
-
-.patientInfoHist .outside-table .header .right button:hover{
-  background: #999999;
-  color: #fff;
-}
   
+.switch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.switch-button {
+  border-radius: 10px;
+}
+
+.select-status {
+  color: black;
+  font-weight: 400;
+}
+
+.select-sex {
+  color: black;
+  font-weight: 400;
+  width: 185px;
+}
+
+.select-proc-doc {
+  color: black;
+  font-weight: 400;
+  width: 370px;
+
+}
+
+.select-status:hover, .select-sex:hover, .select-proc-doc:hover{
+  background-color: #f7f5f5;
+}
+
+

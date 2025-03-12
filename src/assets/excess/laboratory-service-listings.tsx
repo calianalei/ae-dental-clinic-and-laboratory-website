@@ -1,9 +1,9 @@
 import './service-listings.css';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import Header from './admin-header';
+import Header from '../admin-header';
 import React, { useState } from "react";
-import Schedule from './admin'; // Ensure the correct path
-import PatientInfoHistory from './admin'; // Ensure the correct path
+import Schedule from '../admin'; // Ensure the correct path
+import PatientInfoHistory from '../admin'; // Ensure the correct path
 
 const services = [
   {

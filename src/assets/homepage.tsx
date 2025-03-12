@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button"
 import smile from './media/smiling-girl.png' /*https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fwoman-smiling-showing-teeth&psig=AOvVaw14pXQThTiWtEBOMZUTuiZ0&ust=1739763346213000&source=images&cd=vfe&opi=89978449&ved=0CBcQjhxqFwoTCJDOgOGhx4sDFQAAAAAdAAAAABAE*/
 import lab from './media/lab.png' /*https://www.bolton.ac.uk/blogs/behind-the-scenes-of-dental-laboratories*/
 import dental from './media/dental-care.jpg' /*https://parthadental.com/10-besdental-care-tips-to-improve-your-health/*/
+import { Link, useNavigate } from 'react-router-dom';
+
 function Home() {
     return (
         <div className="home">
@@ -31,11 +33,11 @@ function Home() {
                     <div className="circle-design2"></div> 
                         <div className="circle-bg">
                             <img src={dental} alt="Dental Image" />
-                            <div className="hover-text">Dental Care Services</div>
+                            <Link to="/services#dental"><div className="hover-text">Dental Care Services</div></Link>
                         </div>
                         <div>
                             <img src={lab} alt="Lab Image" />
-                            <div className="hover-text">Laboratory Services</div>
+                            <Link to="/services#laboratory"><div className="hover-text">Laboratory Services</div></Link>
                         </div>  
                 </div>
                 <div className="bot-text">

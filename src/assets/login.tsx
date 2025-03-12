@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 // Login Component
 function Login({ switchToSignup, switchToForgotPassword }) {
+  console.log("Rendering Login");
   return (
     <div className="auth-container">
       <Card className="card-container">
@@ -32,6 +33,7 @@ function Login({ switchToSignup, switchToForgotPassword }) {
 
 // Signup Component
 function Signup({ switchToLogin }) {
+  console.log("Rendering Signup");
   return (
     <div className="auth-container">
       <Card className="card-container">
@@ -47,7 +49,7 @@ function Signup({ switchToLogin }) {
               <Button className="w-full" variant="default">CREATE</Button>
             </div>
             <div className="footer-text">
-                <Button onClick={switchToLogin} variant="link">Already have an account? Login</Button>
+              <Button onClick={switchToLogin} variant="link">Already have an account? Login</Button>
             </div>
           </div>
         </CardContent>
@@ -58,6 +60,7 @@ function Signup({ switchToLogin }) {
 
 // Forgot Password Component
 function ForgotPassword({ switchToLogin, switchToSignup }) {
+  console.log("Rendering ForgotPassword");
   return (
     <div className="auth-container">
       <Card className="card-container">
@@ -72,10 +75,9 @@ function ForgotPassword({ switchToLogin, switchToSignup }) {
               <Button className="w-full" variant="default">RESET PASSWORD</Button>
             </div>
             <div className="footer-text">
-                <Button onClick={switchToLogin} variant="link">Remembered your password? Login</Button>
-                <Button onClick={switchToSignup} variant="link">Create an Account</Button>
+              <Button onClick={switchToLogin} variant="link">Remembered your password? Login</Button>
+              <Button onClick={switchToSignup} variant="link">Create an Account</Button>
             </div>
-              
           </div>
         </CardContent>
       </Card>
@@ -86,13 +88,14 @@ function ForgotPassword({ switchToLogin, switchToSignup }) {
 // Main Component to switch between Login, Signup, and ForgotPassword
 function AuthPage() {
   const [view, setView] = useState("login");
+  console.log("Current view: ", view);
 
   const switchToLogin = () => setView("login");
   const switchToSignup = () => setView("signup");
   const switchToForgotPassword = () => setView("forgotPassword");
 
   const renderComponent = () => {
-    switch(view) {
+    switch (view) {
       case "login":
         return <Login switchToSignup={switchToSignup} switchToForgotPassword={switchToForgotPassword} />;
       case "signup":

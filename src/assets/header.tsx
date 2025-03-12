@@ -1,16 +1,22 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from './media/logo.png';
 import user from './media/user.png';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
-import { Link } from 'react-router-dom';
+import './style.css';
 
-
-function AdminHeader({ onPopoverToggle }: { onPopoverToggle: () => void }) {
+function Header({
+  }: {
+  type?: "admin" | "patient";
+  onPopoverToggle?: () => void;
+  onScheduleClick?: () => void;
+  onPatientInfoClick?: () => void;
+}) {
   const [openMenu, setOpenMenu] = useState(false);
+  const navigate = useNavigate(); // ✅ Hook to handle navigation
 
   const handleMenuToggle = () => {
     setOpenMenu(!openMenu);
-    onPopoverToggle(); // This will toggle the visibility of the header
   };
 
   return (
@@ -18,40 +24,31 @@ function AdminHeader({ onPopoverToggle }: { onPopoverToggle: () => void }) {
       <div className="left">
         <Link to="/homepage"><img src={logo} alt="Logo" /></Link>
         <h1> AE DENTAL CLINIC & LABORATORY</h1>
-      </div>        
+      </div>
       <div className="right">
         <Menubar className="menubar">
           <MenubarMenu>
-            <MenubarTrigger><Link to="/about-us">About</Link></MenubarTrigger>
+            <MenubarTrigger onClick={() => navigate("/about-us")}>About</MenubarTrigger>
           </MenubarMenu>
           <MenubarMenu>
-            <MenubarTrigger>Services</MenubarTrigger>
-            <MenubarContent className="menubarcontent">
-              <MenubarItem>
-              Dental Care Services
-              </MenubarItem>
-              <MenubarItem>
-              Laboratory Services
-              </MenubarItem>
-            </MenubarContent>
+            <MenubarTrigger onClick={() => navigate("/services")}>Services</MenubarTrigger>
           </MenubarMenu>
           <MenubarMenu>
-            <MenubarTrigger><Link to="/contact-us">Contact Us</Link></MenubarTrigger>
+            <MenubarTrigger onClick={() => navigate("/contact-us")}>Contact Us</MenubarTrigger>
           </MenubarMenu>
         </Menubar>
-        
+
         <div className="login">
           <Menubar className="menu">
             <MenubarMenu>
               <MenubarTrigger onClick={handleMenuToggle}>
-              <Link to="./assets/admin.tsx">
-                <img src={user} alt="User Avatar" />
-              </Link>
+                <img src={user} alt="User Avatar" className="user-icon" />
               </MenubarTrigger>
               {openMenu && (
                 <MenubarContent>
-                  <MenubarItem>Schedule</MenubarItem>
-                  <MenubarItem>Patient Info & History</MenubarItem>
+                  <MenubarItem onClick={() => navigate("/login")}>Login</MenubarItem>
+                  <MenubarItem onClick={() => navigate("/patient")}>Patient</MenubarItem>
+                  <MenubarItem onClick={() => navigate("/admin")}>Admin</MenubarItem>
                 </MenubarContent>
               )}
             </MenubarMenu>
@@ -62,4 +59,4 @@ function AdminHeader({ onPopoverToggle }: { onPopoverToggle: () => void }) {
   );
 }
 
-export default AdminHeader;
+export default Header;

@@ -31,7 +31,24 @@ h1 span {
     justify-content: center;  
 }
 
+.name {
+    color: black;
+    font-size: large;
+    font-weight: 500;
+    text-align: center;
+}
+.position {
+    color: black;
+    font-size: medium;
+    font-weight: 500;
+    text-align: center;
+}
 
+.texts {
+    font-weight: 300;
+    font-size: small;
+    color: black;
+}
 
 .row3, .row4 {
     display: flex;
@@ -55,19 +72,18 @@ h1 span {
 .image-placeholder {
     width: 300px;
     height: 350px;
-    background-color: #ccc; 
-    background-size: cover; 
+    background-color: #ccc;
+    background-size: cover;
     background-position: center;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     text-align: center;
     padding: 10px;
-}
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for visual effect */
+  }
 
-.image-placeholder .texts {
-    opacity: 100%;
-}
 
 .about h3 {
     font-weight: bolder;
