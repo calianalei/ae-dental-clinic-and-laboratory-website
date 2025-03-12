@@ -1,6 +1,5 @@
 "use client"
 import './admin.css';
-import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,7 +20,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,45 +34,44 @@ import {
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
     TableRow,
   } from "@/components/ui/table"
 
-  const schedules = {
+  const schedules: Record<string, { time: string; patient: string; procedure: string; notes: string }[]> = {
     "2024-02-10": [
       { time: "08:00 AM", patient: "John Doe", procedure: "Tooth Extraction", notes: "Requires sedation" },
-      { time: "10:00 AM", patient: "Jane Smith", procedure: "Dental Cleaning", notes: "No allergies" }
+      { time: "10:00 AM", patient: "Jane Smith", procedure: "Dental Cleaning", notes: "No allergies" },
     ],
     "2024-02-15": [
-      { time: "09:00 AM", patient: "Alice Brown", procedure: "Root Canal", notes: "Sensitive teeth" }
-    ]
+      { time: "09:00 AM", patient: "Alice Brown", procedure: "Root Canal", notes: "Sensitive teeth" },
+    ],
   };
-
 function Schedule({
-    availableTimes,
-    date, setDate,
-    birthday, setBirthday,
-    time, setTime,
-    note, setNote,
-  }: {
-    availableTimes: string[];
-    date: Date | undefined;
-    setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-    birthday: Date | undefined;
-    setBirthday: React.Dispatch<React.SetStateAction<Date | undefined>>;
-    time: string;
-    setTime: React.Dispatch<React.SetStateAction<string>>;
-    note: string;
-    setNote: React.Dispatch<React.SetStateAction<string>>;
-  }) {
-    const isFormValid = date && birthday && time;
-    const [selectedDate, setSelectedDate] = useState(new Date("2024-02-10"));
-    const formattedDate = format(selectedDate, "yyyy-MM-dd");
-    const daySchedules = schedules[formattedDate] || [];
+  availableTimes,
+  date,
+  setDate,
+  birthday,
+  setBirthday,
+  time,
+  setTime,
+  note,
+  setNote,
+}: {
+  availableTimes: string[];
+  date: Date | undefined;
+  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  birthday: Date | undefined;
+  setBirthday: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  time: string;
+  setTime: React.Dispatch<React.SetStateAction<string>>;
+  note: string;
+  setNote: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const isFormValid = date && birthday && time;
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2024-02-10"));
+  const formattedDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+  const daySchedules = schedules[formattedDate] || [];
   
     return (
       <div className="schedule">
@@ -101,11 +98,11 @@ function Schedule({
               <Popover>
                 <PopoverTrigger asChild>
                   <Button className="text-[black] bg-[white] hover:text-[#5D6E7E] hover:bg-[#D9D9D9]">
-                    <CalendarIcon /> {format(selectedDate, "PPP")}
+                    <CalendarIcon /> {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent align="start">
-                  <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} initialFocus />
+                  <Calendar mode="single" selected={selectedDate} onSelect={(date: Date | undefined) => setSelectedDate(date)} initialFocus />
                 </PopoverContent>
               </Popover>
             </div>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import smile from './media/smiling-girl.png' /*https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fwoman-smiling-showing-teeth&psig=AOvVaw14pXQThTiWtEBOMZUTuiZ0&ust=1739763346213000&source=images&cd=vfe&opi=89978449&ved=0CBcQjhxqFwoTCJDOgOGhx4sDFQAAAAAdAAAAABAE*/
 import lab from './media/lab.png' /*https://www.bolton.ac.uk/blogs/behind-the-scenes-of-dental-laboratories*/
 import dental from './media/dental-care.jpg' /*https://parthadental.com/10-besdental-care-tips-to-improve-your-health/*/
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Home() {
     return (
@@ -43,7 +43,8 @@ function Home() {
                 <div className="bot-text">
                     <h2>What Can We Do For You?</h2>
                     <p>From routine check-ups to specialized treatments, AE Dental Clinic
-                        & Laboratory is here to address all your dental and laboratory needs.                            Our expert team is committed to ensuring your comfort while providing
+                        & Laboratory is here to address all your dental and laboratory needs.                            
+                        Our expert team is committed to ensuring your comfort while providing
                         the highest level of care and service.</p>
                 </div>
             </div>

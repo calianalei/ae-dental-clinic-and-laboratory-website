@@ -1,11 +1,6 @@
 import './about-us.css'
 import {
     Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerHeader,
-    DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
 
@@ -150,4 +145,3 @@ function AboutUs (){
 
 export default AboutUs
 
-// <h1 style={{  }}>Our Doctors</h1>
