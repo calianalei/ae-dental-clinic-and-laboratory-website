@@ -25,7 +25,7 @@ function Home() {
                         dedicated to delivering the highest standards of care in a comfortable
                         and welcoming environment. Whether you're visiting for routine check-ups
                         or specialized treatments, your smile is in good hands.</p>
-                    <Button>About Us</Button>
+                    <Button><Link to="/about-us">About Us</Link></Button>
             </div>
             <div className="bot">
                 <div className="nav-pics">

@@ -7,19 +7,22 @@
 }
 
 h1 span {
-    margin-top: 20px; /* Adjust as needed */
+    margin-top: 20px;
 }
 
 .about {
     display: flex;
-    justify-content: center; /* Centers horizontally */
-    margin-top: 100px; /* Reset margin to avoid extra spacing */
+    justify-content: center;
     flex-direction: column;
 }
 
 .about p {
     text-align: center;
     color: black;
+    max-width: 40%;
+    margin: 0 auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .collage2 {
@@ -27,8 +30,8 @@ h1 span {
     flex-direction: column;
     gap: 10px;
     margin: 20px;
-    align-items: center; 
-    justify-content: center;  
+    align-items: center;
+    justify-content: center;
 }
 
 .name {
@@ -37,6 +40,7 @@ h1 span {
     font-weight: 500;
     text-align: center;
 }
+
 .position {
     color: black;
     font-size: medium;
@@ -53,18 +57,18 @@ h1 span {
 .row3, .row4 {
     display: flex;
     gap: 10px;
-    justify-content: center;  
+    justify-content: center;
 }
 
 .image-placeholder2 {
     width: 175px;
     height: 200px;
-    background-color: #ccc; 
-    background-size: cover; 
+    background-color: #ccc;
+    background-size: cover;
     background-position: center;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     text-align: center;
     padding: 10px;
 }
@@ -81,20 +85,34 @@ h1 span {
     text-align: center;
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for visual effect */
-  }
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.image-placeholder3 {
+    width: 300px;
+    height: 350px;
+    background-color: #ccc;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 .about h3 {
     font-weight: bolder;
-    font-size: large;
+    font-size: medium;
 }
 
 .about h4 {
     font-size: medium;
 }
 
-.about h2{
+.about h2 {
     font-weight: bolder;
     text-align: center;
     font-size: x-large;

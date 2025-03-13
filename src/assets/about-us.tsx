@@ -3,66 +3,70 @@ import {
     Drawer,
     DrawerTrigger,
 } from "@/components/ui/drawer";
+import doctor2 from './media/doctor-2.jpg'
+import idPicture from './media/id-pic.png'
+import inside from './media/inside-pic.jfif'
+import waitingArea from './media/waiting-area.jfif'
+import receptionArea from './media/reception-area.jfif'
+import waitingReceptionArea from './media/waiting-reception-area.jfif'
+import inside2 from './media/inside2.jfif'
+
 
 function AboutUs (){
     const clinic = [
-        { name: "Staff 1", image: "url('clinic-a-image-url')" },
-        { name: "Staff 2", image: "url('clinic-b-image-url')" },
-      ];
-      
+        { name: "Aira Nazel", image: `url(${idPicture})` },
+        { name: "Edyui Raibo", image: `url(${idPicture})` },
+        ];
       const lab = [
-        { name: "Lab Staff 1", image: "url('clinic-a-image-url')" },
-        { name: "Lab Staff 2", image: "url('clinic-b-image-url')" },
-        { name: "Lab Staff 3", image: "url('lab-x-image-url')" },
-        { name: "Lab Staff 4", image: "url('lab-y-image-url')" },
-        { name: "Lab Staff 5", image: "url('lab-x-image-url')" },
-        { name: "Lab Staff 6", image: "url('lab-y-image-url')" },
+        { name: "Ramil Quibuyen", image: `url(${idPicture})` },
+        { name: "Jelan Niepangui", image: `url(${idPicture})` },
+        { name: "Jeffrey Adsuara", image: `url(${idPicture})` },
+        { name: "Bryan Gonzales", image: `url(${idPicture})` },
+        { name: "Jopie Retayco", image: `url(${idPicture})` },
+        { name: "Stephen Delos Santos", image: `url(${idPicture})` },
       ];
 
       const facilities = [
-        { image: "url('clinic-a-image-url')" },
-        { image: "url('clinic-a-image-url')" },
-        { image: "url('clinic-a-image-url')" },
-        { image: "url('clinic-a-image-url')" },
-        { image: "url('clinic-a-image-url')" },
-        { image: "url('clinic-a-image-url')" },
+        { image: `url(${inside})` },
+        { image: `url(${waitingArea})` },
+        { image: `url(${receptionArea})` },
+        { image: `url(${waitingReceptionArea})` },
+        { image: `url(${inside2})` },
       ]
       
     return(
         <div className="about">
              <h1>Our Doctors</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque aliquam suscipit purus vitae venenatis. Nulla facilisi.</p>
+            <p>
+                Our professional doctors are dedicated to providing great care while guaranteeing each patient's 
+                well-being and comfort. They collaborate to provide exceptional healthcare with compassion and 
+                professionalism, drawing on experience from a variety of professions.
+            </p>
             <div className="collage2">
             <div className="row3">
                 <Drawer>
                 <DrawerTrigger>
-                    <div
-                    className="image-placeholder"
-                    style={{
-                        backgroundImage: "url('your-placeholder-image-url')", // Background image in TSX
-                    }}
-                    ></div>
+                    <div className="image-placeholder">
+                        <img src={idPicture} style={{width: '100%', height: '100%'}}></img>
+                    </div>
                     <div className="name">
-                    <h3>Name of Doctor</h3>
+                    <h3>Arnel B. Rivera</h3>
                     </div>
                     <div className="position">
-                    <h4>Position of Doctor</h4>
+                    <h4>Dentist</h4>
                     </div>
                 </DrawerTrigger>
                 </Drawer>
                 <Drawer>
                 <DrawerTrigger>
-                    <div
-                    className="image-placeholder"
-                    style={{
-                        backgroundImage: "url('your-placeholder-image-url')", // Background image in TSX
-                    }}
-                    ></div>
+                    <div className="image-placeholder">
+                        <img src={doctor2} style={{width: '100%', height: '100%'}}></img>
+                    </div>
                     <div className="name">
-                    <h3>Name of Doctor</h3>
+                    <h3>Elishar C. Rivera</h3>
                     </div>
                     <div className="position">
-                    <h4>Position of Doctor</h4>
+                    <h4>Dentist</h4>
                     </div>
                 </DrawerTrigger>
                 </Drawer>
@@ -113,11 +117,11 @@ function AboutUs (){
                 <h1>Our Facilities</h1>
                     <div className="collage2">
                     <div className="row3">
-                        {facilities.slice(0, 4).map((facility, index) => (
+                        {facilities.slice(0, 3).map((facility, index) => (
                         <Drawer key={index}>
                             <DrawerTrigger>
                             <div
-                                className="image-placeholder"
+                                className="image-placeholder3"
                                 style={{ backgroundImage: facility.image }}
                             ></div>
                             </DrawerTrigger>
@@ -125,11 +129,11 @@ function AboutUs (){
                         ))}
                     </div>
                     <div className="row4">
-                        {facilities.slice(4, 8).map((facility, index) => (
+                        {facilities.slice(3, 8).map((facility, index) => (
                         <Drawer key={index}>
                             <DrawerTrigger>
                             <div
-                                className="image-placeholder"
+                                className="image-placeholder3"
                                 style={{ backgroundImage: facility.image }}
                             ></div>
                             </DrawerTrigger>

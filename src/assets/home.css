@@ -124,6 +124,8 @@
     align-items: center;
     height: auto;
     gap: 50px;
+    max-width: 60%;
+    justify-self: center;
 }
 
 .home .bot .nav-pics {
@@ -131,7 +133,7 @@
     gap: 1px;
     margin: 10px;
     justify-content: center;
-    position: relative; /* Added for proper absolute positioning */
+    position: relative; 
 }
 
 .home .bot .nav-pics div {
