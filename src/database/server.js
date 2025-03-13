@@ -5,7 +5,7 @@ import patientRoutes from './routes/patientRoutes.js';
 //import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
-const PORT = 5000; //backend
+const PORT = 5; //backend
 
 app.use(cors());
 app.use(express.json());

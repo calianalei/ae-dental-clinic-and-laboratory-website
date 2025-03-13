@@ -5,18 +5,24 @@ import user from './media/user.png';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import './style.css';
 
-function Header({
-  }: {
-  type?: "admin" | "patient";
+interface HeaderProps {
+  type?: 'admin' | 'patient' | null; // Allow null as a type
+  isLoggedIn: boolean;
+  onSignOut: () => void;
   onPopoverToggle?: () => void;
-  onScheduleClick?: () => void;
-  onPatientInfoClick?: () => void;
-}) {
+}
+
+function Header({ type, isLoggedIn, onSignOut, onPopoverToggle }: HeaderProps) {
   const [openMenu, setOpenMenu] = useState(false);
-  const navigate = useNavigate(); // ✅ Hook to handle navigation
+  const navigate = useNavigate();
 
   const handleMenuToggle = () => {
     setOpenMenu(!openMenu);
+  };
+
+  const handleSignOut = () => {
+    onSignOut(); // Call the sign-out handler from props
+    navigate('/homepage'); // Redirect to homepage
   };
 
   return (
@@ -46,9 +52,20 @@ function Header({
               </MenubarTrigger>
               {openMenu && (
                 <MenubarContent>
-                  <MenubarItem onClick={() => navigate("/login")}>Login</MenubarItem>
-                  <MenubarItem onClick={() => navigate("/patient")}>Patient</MenubarItem>
-                  <MenubarItem onClick={() => navigate("/admin")}>Admin</MenubarItem>
+                  {/* Conditionally render Login/Sign Out */}
+                  {isLoggedIn ? (
+                    <MenubarItem onClick={handleSignOut}>Sign Out</MenubarItem>
+                  ) : (
+                    <MenubarItem onClick={() => navigate("/login")}>Login</MenubarItem>
+                  )}
+
+                  {/* Conditionally render Patient/Admin menu items */}
+                  {type === 'admin' && (
+                    <MenubarItem onClick={() => navigate("/admin")}>Admin</MenubarItem>
+                  )}
+                  {type === 'patient' && (
+                    <MenubarItem onClick={() => navigate("/patient")}>Patient</MenubarItem>
+                  )}
                 </MenubarContent>
               )}
             </MenubarMenu>
