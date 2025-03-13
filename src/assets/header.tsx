@@ -12,7 +12,7 @@ interface HeaderProps {
   onPopoverToggle?: () => void;
 }
 
-function Header({ type, isLoggedIn, onSignOut, onPopoverToggle }: HeaderProps) {
+function Header({ type, isLoggedIn, onSignOut }: HeaderProps) {
   const [openMenu, setOpenMenu] = useState(false);
   const navigate = useNavigate();
 
