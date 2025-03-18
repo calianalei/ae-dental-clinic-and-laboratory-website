@@ -3,28 +3,44 @@ import db from "../db.js";
 
 const router = express.Router();
 
-// Get all scheduled appointments
-router.get('/appointments', (req, res) => {
-    const sql = 'SELECT * FROM appointments ORDER BY scheduledDate, appointmentTime';
+// Correct the route to be just '/'
+router.get('/schedule', (req, res) => {
+    const sql = 'SELECT * FROM schedule ORDER BY scheduledDate, appointmentTime';
     db.query(sql, (err, results) => {
         if (err) {
+            console.error('Error fetching schedule:', err);
             return res.status(500).json({ error: err.message });
         }
         res.json(results);
     });
 });
 
-// Add a new appointment
-router.post('/appointments', (req, res) => {
-    const { fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note } = req.body;
-    const sql = `INSERT INTO appointments (fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    db.query(sql, [fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note], (err, result) => {
+// Correct the POST route to handle /schedule
+router.post('/schedule', (req, res) => {
+    console.log('Received appointment data:', req.body);
+
+    const { fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note, doctor } = req.body;
+
+    // Validate required fields
+    if (!fullName || !birthday || !sex || !scheduledDate || !appointmentTime || !procedureName || !doctor) {
+        console.error('Missing required fields:', { fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, doctor });
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const sql = `INSERT INTO schedule (fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note, doctor) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [fullName, birthday, sex, scheduledDate, appointmentTime, procedureName, note, doctor];
+    console.log('Executing SQL with values:', values);
+
+    db.query(sql, values, (err, result) => {
         if (err) {
+            console.error('Database error:', err);
             return res.status(500).json({ error: err.message });
         }
-        res.json({ message: 'Appointment scheduled successfully', id: result.insertId });
+        console.log('Appointment created successfully:', result);
+        res.status(201).json({ message: 'Appointment scheduled successfully', id: result.insertId });
     });
 });
+
 
 export default router;

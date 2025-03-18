@@ -85,10 +85,11 @@ function Schedule({
 }) {
   const formattedDate = date ? format(date, "yyyy-MM-dd") : "";
   const isFormValid = date && birthday && time;
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2024-02-10"));
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const formattedBirthday = birthday ? format(birthday, "yyyy-MM-dd") : "";
   const [schedules, setSchedules] = useState<Record<string, Schedule[]>>({});
-  const daySchedules: Schedule[] = schedules[formattedDate] || [];
+  const formattedSelectedDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+  const daySchedules: Schedule[] = schedules[formattedSelectedDate] || [];
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [fullName, setFullName] = useState("");
@@ -97,13 +98,34 @@ function Schedule({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:5/api/appointments") 
-      .then(response => {
-        setAppointments(response.data);
-      })
-      .catch(error => {
+    const fetchAppointments = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/schedule");
+        const fetchedAppointments = response.data;
+        setAppointments(fetchedAppointments);
+  
+        // Convert appointments to schedules format
+        const newSchedules: Record<string, Schedule[]> = {};
+        fetchedAppointments.forEach((appointment: Appointment) => {
+          const date = appointment.scheduledDate;
+          if (!newSchedules[date]) {
+            newSchedules[date] = [];
+          }
+          newSchedules[date].push({
+            time: appointment.appointmentTime,
+            patient: appointment.fullName,
+            procedure: appointment.procedureName,
+            notes: appointment.note,
+          });
+        });
+        setSchedules(newSchedules);
+      } catch (error) {
         console.error("Error fetching appointments:", error);
-      });
+        alert("Failed to fetch appointments. Please try again later.");
+      }
+    };
+  
+    fetchAppointments();
   }, []);
 
   const handleSubmit = async () => {
@@ -111,35 +133,50 @@ function Schedule({
       alert("Please fill out all required fields.");
       return;
     }
+  
     setIsLoading(true);
     try {
+      // Format sex to single character
+      const formattedSex = sex === "Male" ? "M" : sex === "Female" ? "F" : "O";
+  
+      // Format dates to YYYY-MM-DD
+      const formattedBirthday = birthday ? format(birthday, "yyyy-MM-dd") : "";
+      const formattedScheduledDate = date ? format(date, "yyyy-MM-dd") : "";
+  
+      // Format time to HH:mm:ss
+      const formattedTime = time ? `${time}:00` : "";
+  
       const newAppointment = {
-        fullName,
+        fullName: fullName.trim(),
         birthday: formattedBirthday,
-        sex,
-        scheduledDate: formattedDate,
-        appointmentTime: time,
+        sex: formattedSex,
+        scheduledDate: formattedScheduledDate,
+        appointmentTime: formattedTime,
         procedureName,
-        note
+        note: note.trim(),
       };
   
-      console.log("Sending data:", newAppointment); // Debugging log
+      console.log("Sending data:", newAppointment);
   
-      const response = await axios.post("http://localhost:5000/api/appointments", newAppointment);
+      const response = await axios.post("http://localhost:5000/schedule", newAppointment);
+      console.log("Server response:", response.data);
   
       if (response.status === 201 || response.status === 200) {
         alert("Appointment Scheduled Successfully!");
-        
-        setAppointments([...appointments, newAppointment]);
   
+        // Update local state with new appointment
+        setAppointments((prevAppointments) => [...prevAppointments, newAppointment]);
+  
+        // Update schedules state
         setSchedules((prevSchedules) => ({
           ...prevSchedules,
-          [formattedDate]: [
-            ...(prevSchedules[formattedDate] || []),
-            { time, patient: fullName, procedure: procedureName, notes: note }
-          ]
+          [formattedScheduledDate]: [
+            ...(prevSchedules[formattedScheduledDate] || []),
+            { time: formattedTime, patient: fullName, procedure: procedureName, notes: note },
+          ],
         }));
   
+        // Reset form
         setFullName("");
         setSex("");
         setBirthday(undefined);
@@ -149,23 +186,13 @@ function Schedule({
         setNote("");
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        console.error("Axios Error:", error.response?.data);
-        alert(`Error: ${error.response?.data.message || "An error occurred while scheduling the appointment."}`);
-      } else if (error instanceof Error) {
-        // Handle generic errors
-        console.error("Error:", error.message);
-        alert(`Error: ${error.message}`);
-      } else {
-        // Handle unknown errors
-        console.error("Unknown Error:", error);
-        alert("An unknown error occurred while scheduling the appointment.");
-      }
+      console.error("Error:", error);
+      alert("An error occurred while scheduling the appointment.");
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="schedule">

@@ -55,7 +55,7 @@ import {
     ]
   };
 
-const API_URL = 'http://localhost:5/api';
+const API_URL = 'http://localhost:5000/api';
 
 function PatientInfoHistory() {
     const [birthday, setBirthday] = useState(null);

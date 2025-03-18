@@ -15,7 +15,7 @@ interface AuthComponentProps {
   onLogin?: (role: 'admin' | 'patient') => void; // Add onLogin prop
 }
 
-const API_BASE_URL = "http://localhost:5/auth";
+const API_BASE_URL = "http://localhost:5000/auth";
 
 // Login Component
 function Login({ switchToSignup, switchToForgotPassword, onLogin }: AuthComponentProps) {
