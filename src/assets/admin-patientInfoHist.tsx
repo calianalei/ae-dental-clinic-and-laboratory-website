@@ -1,10 +1,13 @@
 "use client"
 import './admin.css';
+import axios from "axios"; 
 import { Button } from "@/components/ui/button";
+import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
+import user from './media/user.png';
 import { useState } from 'react';
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -25,93 +28,112 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import {
     Table,
     TableBody,
+    TableCaption,
     TableCell,
+    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
 
+  const schedules = {
+    "2024-02-10": [
+      { time: "08:00 AM", patient: "John Doe", procedure: "Tooth Extraction", notes: "Requires sedation" },
+      { time: "10:00 AM", patient: "Jane Smith", procedure: "Dental Cleaning", notes: "No allergies" }
+    ],
+    "2024-02-15": [
+      { time: "09:00 AM", patient: "Alice Brown", procedure: "Root Canal", notes: "Sensitive teeth" }
+    ]
+  };
 
-  interface Patient {
-    name: string;
-    birthday: string;
-    contactNumber: string;
-    address: string;
-    allergies: string;
-    currentMedications: string;
-    medicalHistory: string;
-    visits: { date: string; procedure: string; notes: string }[];
-  }
-  
-  function PatientInfoHistory() {
-    const patientData: Patient[] = [
-      {
-        name: "John Doe",
-        birthday: "01/15/1990",
-        contactNumber: "+1 (555) 123-4567",
-        address: "123 Main St, Springfield, IL",
-        allergies: "Peanuts, Dust",
-        currentMedications: "Aspirin",
-        medicalHistory: "Asthma, Hypertension",
-        visits: [
-          { date: "2023-05-12", procedure: "Blood Test", notes: "Normal results" },
-          { date: "2022-11-23", procedure: "X-ray", notes: "Fracture healing well" }
-        ]
-      }
-    ];
-  
-    const [record, setRecord] = useState<{
-      date: Date | undefined;
-      procedure: string;
-      notes: string;
-    }>({
-      date: undefined,
-      procedure: "",
-      notes: "",
-    });
-  
-    const [patient, setPatient] = useState<{
-      name: string;
-      address: string;
-      contact: string;
-      allergies: string;
-      medications: string;
-      history: string;
-      birthday: Date | undefined;
-    }>({
-      name: '',
-      address: '',
-      contact: '',
-      allergies: '',
-      medications: '',
-      history: '',
-      birthday: undefined,
-    });
-  
-    const handleAddClick = () => {
-      console.log("Adding new record with details:", record);
-      setRecord({ date: undefined, procedure: "", notes: "" });
-    };
-  
-    const handleAddPatient = () => {
-      console.log('New Patient Details:', patient);
-      setPatient({
-        name: '',
-        address: '',
-        contact: '',
-        allergies: '',
-        medications: '',
-        history: '',
-        birthday: undefined,
+const API_URL = 'http://localhost:5/api';
+
+function PatientInfoHistory() {
+    const [birthday, setBirthday] = useState(null);
+  const [date, setDate] = useState(null); // Added missing date state
+
+  const patientData = [
+    {
+      name: "John Doe",
+      birthday: "01/15/1990",
+      contactNumber: "+1 (555) 123-4567",
+      address: "123 Main St, Springfield, IL",
+      allergies: "Peanuts, Dust",
+      currentMedications: "Aspirin",
+      medicalHistory: "Asthma, Hypertension",
+      visits: [
+        { date: "2023-05-12", procedure: "Blood Test", notes: "Normal results" },
+        { date: "2022-11-23", procedure: "X-ray", notes: "Fracture healing well" }
+      ]
+    }
+  ];
+
+  const [record, setRecord] = useState({
+  date: null,
+  procedure: "",
+  notes: "",
+});
+
+const handleAddClick = () => {
+  // Handle the event here
+  console.log("Adding new record with details:", record);
+  // You can perform any actions such as submitting data to a server or saving it locally
+  // For example, resetting the form after adding
+  setRecord({ date: null, procedure: "", notes: "" });
+};
+
+const [patient, setPatient] = useState({
+  name: '',
+  address: '',
+  contact: '',
+  allergies: '',
+  medications: '',
+  history: '',
+  birthday: null,
+});
+
+const handleAddPatient = async () => {
+  try {
+    const formattedBirthday = patient.birthday 
+      ? format(patient.birthday, "yyyy-MM-dd")
+      : "1970-01-01"; // Default date if not provided
+
+      const response = await axios.post(`${API_URL}/patients`, {
+        fullName: patient.name,    // Ensure no missing commas
+        birthday: formattedBirthday,
+        address: patient.address,  // Check if `address` is correctly defined
+        contactNum: patient.contact,
+        allergies: patient.allergies,
+        currentMedications: patient.medications,
+        medicalHistory: patient.history,
       });
-    };
+
+    console.log("Response:", response);
+
+    if (response.status === 201) {
+      alert("Patient added successfully!");
+    } else {
+      alert("Failed to add patient.");
+    }
+  } catch (error) {
+    console.error("Error adding patient:", error);
+    if (error.response) {
+      console.error("Server Response:", error.response.data);
+      alert(`Error: ${error.response.data.message || "An error occurred while adding the patient."}`);
+    } else {
+      alert("An error occurred while adding the patient.");
+    }
+  }
+};
 
   return (
     <div className="patientInfoHist">

@@ -3,7 +3,7 @@ import db from "../db.js";
 
 const router = express.Router();
 
-// ✅ GET All Patients
+// GET All Patients
 router.get("/patients", (req, res) => {
   db.query("SELECT * FROM patient_info", (err, results) => {
     if (err) {
@@ -13,7 +13,7 @@ router.get("/patients", (req, res) => {
   });
 });
 
-// ✅ GET Patient by ID (including visit history)
+// GET Patient by ID (including visit history)
 router.get("/patients/:id", (req, res) => {
   const patientId = req.params.id;
 
@@ -36,7 +36,7 @@ router.get("/patients/:id", (req, res) => {
   });
 });
 
-// ✅ Add New Patient
+// Add New Patient
 router.post("/patients", (req, res) => {
     console.log("Request Body:", req.body); // Log the incoming data
     const { fullName, birthday, address, contactNum, allergies, currentMedications, medicalHistory } = req.body;
@@ -52,7 +52,7 @@ router.post("/patients", (req, res) => {
     });
   });
 
-// ✅ Add a Visit Record
+// Add a Visit Record
 router.post("/visits", (req, res) => {
   const { PatientID, visitDate, procedurePerformed, notes } = req.body;
 
@@ -64,7 +64,7 @@ router.post("/visits", (req, res) => {
   });
 });
 
-// ✅ Delete Patient by ID
+// Delete Patient by ID
 router.delete("/patients/:id", (req, res) => {
   const patientId = req.params.id;
 
