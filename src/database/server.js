@@ -3,6 +3,8 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import patientRoutes from './routes/patientRoutes.js';
 import adminSchedRoutes from './routes/adminSchedRoutes.js';
+import patientInfoRoutes from './routes/patientInfoRoutes.js';
+import patientDashboardRoutes from './routes/patientDashboardRoutes.js';
 //import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
@@ -14,8 +16,10 @@ app.use(express.json());
 
 // API routes
 app.use('/auth', authRoutes);
-app.use('/api', patientRoutes);
+app.use('/patient', patientRoutes);
 app.use('/schedule', adminSchedRoutes);
+app.use('/', patientInfoRoutes);
+app.use('/patient-dashboard', patientDashboardRoutes);
 //app.use('/admin', adminRoutes);
 
 // Error handling middleware

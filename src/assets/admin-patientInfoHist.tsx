@@ -8,7 +8,7 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import user from './media/user.png';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea"
 import {
   Popover,
@@ -57,83 +57,192 @@ import {
 
 const API_URL = 'http://localhost:5000/api';
 
+interface Patient {
+  PatientID?: number;
+  fullName: string;
+  birthday: Date | null;
+  address: string;
+  contactNum: string;
+  allergies: string;
+  currentMedications: string;
+  medicalHistory: string;
+}
+
+interface VisitRecord {
+  date: Date | null;
+  procedure: string;
+  notes: string;
+}
+
+interface Visit {
+  VisitID?: number;
+  PatientID: number;
+  visitDate: string;
+  procedure: string;
+  notes: string;
+}
+
 function PatientInfoHistory() {
-    const [birthday, setBirthday] = useState(null);
-  const [date, setDate] = useState(null); // Added missing date state
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [patient, setPatient] = useState<Patient>({
+    fullName: '',
+    birthday: null,
+    address: '',
+    contactNum: '',
+    allergies: '',
+    currentMedications: '',
+    medicalHistory: '',
+  });
+  const [record, setRecord] = useState<VisitRecord>({
+    date: null,
+    procedure: '',
+    notes: '',
+  });
 
-  const patientData = [
-    {
-      name: "John Doe",
-      birthday: "01/15/1990",
-      contactNumber: "+1 (555) 123-4567",
-      address: "123 Main St, Springfield, IL",
-      allergies: "Peanuts, Dust",
-      currentMedications: "Aspirin",
-      medicalHistory: "Asthma, Hypertension",
-      visits: [
-        { date: "2023-05-12", procedure: "Blood Test", notes: "Normal results" },
-        { date: "2022-11-23", procedure: "X-ray", notes: "Fracture healing well" }
-      ]
+  const filterRanges = ['all', 'a-e', 'f-j', 'k-o', 'p-t', 'u-z'];
+  const [currentFilterIndex, setCurrentFilterIndex] = useState(0);
+
+  // Fetch patients and visits on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [patientsResponse, visitsResponse] = await Promise.all([
+          axios.get('http://localhost:5000/patient-info'),
+          axios.get('http://localhost:5000/previous-visits')
+        ]);
+        setPatients(patientsResponse.data);
+        setFilteredPatients(patientsResponse.data);
+        setVisits(visitsResponse.data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        if (axios.isAxiosError(err)) {
+          setError(`Failed to load patient information: ${err.response?.data?.error || err.message}`);
+        } else {
+          setError('Failed to load patient information');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filterPatients = (range: string) => {
+    setActiveFilter(range);
+    if (range === 'all') {
+      setFilteredPatients(patients);
+      return;
     }
-  ];
 
-  const [record, setRecord] = useState({
-  date: null,
-  procedure: "",
-  notes: "",
-});
+    const [start, end] = range.split('-');
+    const filtered = patients.filter(patient => {
+      const lastName = patient.fullName.split(' ').pop()?.toLowerCase() || '';
+      return lastName >= start.toLowerCase() && lastName <= end.toLowerCase();
+    });
+    setFilteredPatients(filtered);
+  };
 
-const handleAddClick = () => {
-  // Handle the event here
-  console.log("Adding new record with details:", record);
-  // You can perform any actions such as submitting data to a server or saving it locally
-  // For example, resetting the form after adding
-  setRecord({ date: null, procedure: "", notes: "" });
-};
+  const handleAddClick = () => {
+    // Handle the event here
+    console.log("Adding new record with details:", record);
+    // You can perform any actions such as submitting data to a server or saving it locally
+    // For example, resetting the form after adding
+    setRecord({ date: null, procedure: "", notes: "" });
+  };
 
-const [patient, setPatient] = useState({
-  name: '',
-  address: '',
-  contact: '',
-  allergies: '',
-  medications: '',
-  history: '',
-  birthday: null,
-});
+  const handleAddPatient = async () => {
+    try {
+      if (!patient.fullName || !patient.birthday) {
+        alert('Please fill in all required fields');
+        return;
+      }
 
-const handleAddPatient = async () => {
-  try {
-    const formattedBirthday = patient.birthday 
-      ? format(patient.birthday, "yyyy-MM-dd")
-      : "1970-01-01"; // Default date if not provided
-
-      const response = await axios.post(`${API_URL}/patients`, {
-        fullName: patient.name,    // Ensure no missing commas
-        birthday: formattedBirthday,
-        address: patient.address,  // Check if `address` is correctly defined
-        contactNum: patient.contact,
-        allergies: patient.allergies,
-        currentMedications: patient.medications,
-        medicalHistory: patient.history,
+      const formattedBirthday = format(patient.birthday, 'yyyy-MM-dd');
+      const response = await axios.post('http://localhost:5000/patient-info', {
+        ...patient,
+        birthday: formattedBirthday
       });
 
-    console.log("Response:", response);
+      if (response.status === 201) {
+        alert('Patient added successfully!');
+        // Refresh the patients list
+        const patientsResponse = await axios.get('http://localhost:5000/patient-info');
+        setPatients(patientsResponse.data);
+        // Reset the form
+        setPatient({
+          fullName: '',
+          birthday: null,
+          address: '',
+          contactNum: '',
+          allergies: '',
+          currentMedications: '',
+          medicalHistory: '',
+        });
+      }
+    } catch (err) {
+      console.error('Error adding patient:', err);
+      if (axios.isAxiosError(err)) {
+        alert(`Error: ${err.response?.data?.error || 'Failed to add patient'}`);
+      } else {
+        alert('An error occurred while adding the patient');
+      }
+    }
+  };
 
-    if (response.status === 201) {
-      alert("Patient added successfully!");
-    } else {
-      alert("Failed to add patient.");
+  const handleAddVisit = async (patientId: number) => {
+    try {
+      if (!record.date || !record.procedure) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const formattedDate = format(record.date, 'yyyy-MM-dd');
+      const response = await axios.post('http://localhost:5000/patient/visits', {
+        PatientID: patientId,
+        visitDate: formattedDate,
+        procedurePerformed: record.procedure,
+        notes: record.notes
+      });
+
+      if (response.status === 201) {
+        alert('Visit record added successfully!');
+        // Refresh the visits list
+        const visitsResponse = await axios.get('http://localhost:5000/previous-visits');
+        setVisits(visitsResponse.data);
+        // Reset the form
+        setRecord({
+          date: null,
+          procedure: '',
+          notes: ''
+        });
+      }
+    } catch (err) {
+      console.error('Error adding visit:', err);
+      if (axios.isAxiosError(err)) {
+        alert(`Error: ${err.response?.data?.error || 'Failed to add visit record'}`);
+      } else {
+        alert('An error occurred while adding the visit record');
+      }
     }
-  } catch (error) {
-    console.error("Error adding patient:", error);
-    if (error.response) {
-      console.error("Server Response:", error.response.data);
-      alert(`Error: ${error.response.data.message || "An error occurred while adding the patient."}`);
-    } else {
-      alert("An error occurred while adding the patient.");
-    }
-  }
-};
+  };
+
+  const handlePreviousFilter = () => {
+    setCurrentFilterIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    filterPatients(filterRanges[currentFilterIndex > 0 ? currentFilterIndex - 1 : 0]);
+  };
+
+  const handleNextFilter = () => {
+    setCurrentFilterIndex((prev) => (prev < filterRanges.length - 1 ? prev + 1 : prev));
+    filterPatients(filterRanges[currentFilterIndex < filterRanges.length - 1 ? currentFilterIndex + 1 : currentFilterIndex]);
+  };
 
   return (
     <div className="patientInfoHist">
@@ -157,14 +266,13 @@ const handleAddPatient = async () => {
                         id="name"
                         placeholder="Name"
                         className={cn("w-[185px] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                        value={patient.name}
-                        onChange={(e) => setPatient({ ...patient, name: e.target.value })}
+                        value={patient.fullName}
+                        onChange={(e) => setPatient({ ...patient, fullName: e.target.value })}
                       />
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             className={cn("w-[185px] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                            onClick={() => {/* You can handle date selection here */}}
                           >
                             <CalendarIcon />
                             {patient.birthday ? format(patient.birthday, "PPP") : <span>Pick a date</span>}
@@ -173,8 +281,8 @@ const handleAddPatient = async () => {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={patient.birthday}
-                            onSelect={(date) => setPatient({ ...patient, birthday: date })}
+                            selected={patient.birthday || undefined}
+                            onSelect={(date) => setPatient({ ...patient, birthday: date || null })}
                             initialFocus
                           />
                         </PopoverContent>
@@ -191,8 +299,8 @@ const handleAddPatient = async () => {
                       id="contact"
                       placeholder="Contact Number"
                       className={cn("w-[full] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                      value={patient.contact}
-                      onChange={(e) => setPatient({ ...patient, contact: e.target.value })}
+                      value={patient.contactNum}
+                      onChange={(e) => setPatient({ ...patient, contactNum: e.target.value })}
                     />
                     <Input
                       id="allergies"
@@ -205,15 +313,15 @@ const handleAddPatient = async () => {
                       id="medications"
                       placeholder="Current Medications"
                       className={cn("w-[full] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                      value={patient.medications}
-                      onChange={(e) => setPatient({ ...patient, medications: e.target.value })}
+                      value={patient.currentMedications}
+                      onChange={(e) => setPatient({ ...patient, currentMedications: e.target.value })}
                     />
                     <Input
                       id="history"
                       placeholder="Medical History"
                       className={cn("w-[full] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                      value={patient.history}
-                      onChange={(e) => setPatient({ ...patient, history: e.target.value })}
+                      value={patient.medicalHistory}
+                      onChange={(e) => setPatient({ ...patient, medicalHistory: e.target.value })}
                     />
                   </div>
                   <DialogFooter>
@@ -243,23 +351,23 @@ const handleAddPatient = async () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {patientData.map((patient, index) => (
-                <TableRow key={index}>
-                  <TableCell>{patient.name}</TableCell>
-                  <TableCell>{patient.birthday}</TableCell>
-                  <TableCell>{patient.contactNumber}</TableCell>
+              {filteredPatients.map((patient) => (
+                <TableRow key={patient.PatientID}>
+                  <TableCell>{patient.fullName}</TableCell>
+                  <TableCell>{patient.birthday ? format(new Date(patient.birthday), 'MM/dd/yyyy') : ''}</TableCell>
+                  <TableCell>{patient.contactNum}</TableCell>
                   <TableCell>{patient.address}</TableCell>
                   <TableCell>{patient.allergies}</TableCell>
                   <TableCell>{patient.currentMedications}</TableCell>
                   <TableCell>{patient.medicalHistory}</TableCell>
                   <TableCell>
                     <Dialog>
-                      <DialogTrigger>Open</DialogTrigger>
+                      <DialogTrigger>View Visits</DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Previous Visits</DialogTitle>
                           <DialogDescription>
-                            This is the list of {patient.name}'s visits for the last 5 years.
+                            This is the list of {patient.fullName}'s visits.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="visit-table">
@@ -267,36 +375,39 @@ const handleAddPatient = async () => {
                             <TableHeader>
                               <TableRow>
                                 <TableHead>Date</TableHead>
-                                <TableHead>Procedure Performed</TableHead>
+                                <TableHead>Procedure</TableHead>
                                 <TableHead>Notes</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {patient.visits.map((visit, vIndex) => (
-                                <TableRow key={vIndex}>
-                                  <TableCell>{visit.date}</TableCell>
-                                  <TableCell>{visit.procedure}</TableCell>
-                                  <TableCell>{visit.notes}</TableCell>
-                                </TableRow>
-                              ))}
+                              {visits
+                                .filter(visit => visit.PatientID === patient.PatientID)
+                                .map((visit, vIndex) => (
+                                  <TableRow key={vIndex}>
+                                    <TableCell>{format(new Date(visit.visitDate), 'MM/dd/yyyy')}</TableCell>
+                                    <TableCell>{visit.procedure}</TableCell>
+                                    <TableCell>{visit.notes}</TableCell>
+                                  </TableRow>
+                                ))}
                             </TableBody>
                           </Table>
                         </div>
                         <DialogFooter>
                           <Popover>
                             <PopoverTrigger asChild>
-                              <Button className="text-[black] bg-[#f7f7f7] hover:text-[black] hover:bg-[#D9D9D9]">Add Record</Button>
+                              <Button className="text-[black] bg-[#f7f7f7] hover:text-[black] hover:bg-[#D9D9D9]">
+                                Add Record
+                              </Button>
                             </PopoverTrigger>
                             <PopoverContent className="p-4 space-y-3">
-                              <h3 className="text-lg font-semibold">Add New Record for {patient.name}</h3>
+                              <h3 className="text-lg font-semibold">Add New Record for {patient.fullName}</h3>
                               <div className="grid gap-2">
                                 <div>
-                                  <label className="text-sm font-medium">Date:</label> <br />
+                                  <label className="text-sm font-medium">Date:</label>
                                   <Popover>
                                     <PopoverTrigger asChild>
                                       <Button
                                         className={cn("w-[250px] justify-start font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                                        onClick={() => {/* You can handle date selection here */}}
                                       >
                                         <CalendarIcon />
                                         {record.date ? format(record.date, "PPP") : <span>Pick a date</span>}
@@ -305,8 +416,8 @@ const handleAddPatient = async () => {
                                     <PopoverContent className="w-auto p-0">
                                       <Calendar
                                         mode="single"
-                                        selected={record.date}
-                                        onSelect={(date) => setRecord({ ...record, date })}
+                                        selected={record.date || undefined}
+                                        onSelect={(date) => setRecord({ ...record, date: date || null })}
                                         initialFocus
                                       />
                                     </PopoverContent>
@@ -338,14 +449,18 @@ const handleAddPatient = async () => {
                                   <label className="text-sm font-medium">Notes:</label>
                                   <Textarea
                                     className={cn("w-[250px] font-normal text-[black] bg-[white] hover:bg-[#f7f5f5]")}
-                                    id="record-notes"
                                     placeholder="Enter notes here"
                                     value={record.notes}
                                     onChange={(e) => setRecord({ ...record, notes: e.target.value })}
                                   />
                                 </div>
                               </div>
-                              <Button className="w-full" onClick={handleAddClick}>Add</Button>
+                              <Button 
+                                className="w-full" 
+                                onClick={() => patient.PatientID && handleAddVisit(patient.PatientID)}
+                              >
+                                Add Visit Record
+                              </Button>
                             </PopoverContent>
                           </Popover>
                         </DialogFooter>
@@ -356,6 +471,29 @@ const handleAddPatient = async () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="filter-section" style={{ marginTop: '20px', marginBottom: '50px', textAlign: 'center' }}>
+          <div className="filter-buttons" style={{ display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button
+              className="text-[black] bg-[white] hover:text-[#5D6E7E] hover:bg-[#D9D9D9]"
+              onClick={handlePreviousFilter}
+              disabled={currentFilterIndex === 0}
+            >
+              &lt;
+            </Button>
+            <Button
+              className={`text-[black] bg-[white] hover:text-[#5D6E7E] hover:bg-[#D9D9D9] ${activeFilter === filterRanges[currentFilterIndex] ? 'bg-[#D9D9D9]' : ''}`}
+            >
+              {filterRanges[currentFilterIndex].toUpperCase()}
+            </Button>
+            <Button
+              className="text-[black] bg-[white] hover:text-[#5D6E7E] hover:bg-[#D9D9D9]"
+              onClick={handleNextFilter}
+              disabled={currentFilterIndex === filterRanges.length - 1}
+            >
+              &gt;
+            </Button>
+          </div>
         </div>
       </div>
     </div>

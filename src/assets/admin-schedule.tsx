@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/table"
 
 interface Appointment {
+  ScheduleID: number;
   fullName: string;
   birthday: string;
   sex: string;
@@ -48,23 +49,17 @@ interface Appointment {
   appointmentTime: string;
   procedureName: string;
   note: string;
+  status: string;
+  doctor: string;
 }
 interface Schedule {
   time: string;
   patient: string;
   procedure: string;
   notes: string;
+  status: string;
+  scheduleId: number;
 }
-
-/* const schedules: Record<string, Array<{ time: string; patient: string; procedure: string; notes: string }>> = {
-  "2024-02-10": [
-    { time: "08:00 AM", patient: "John Doe", procedure: "Tooth Extraction", notes: "Requires sedation" },
-    { time: "10:00 AM", patient: "Jane Smith", procedure: "Dental Cleaning", notes: "No allergies" }
-  ],
-  "2024-02-15": [
-    { time: "09:00 AM", patient: "Alice Brown", procedure: "Root Canal", notes: "Sensitive teeth" }
-  ]
-}; */
 
 function Schedule({
   availableTimes,
@@ -96,37 +91,91 @@ function Schedule({
   const [sex, setSex] = useState("");
   const [procedureName, setProcedureName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<string>("");
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/schedule");
-        const fetchedAppointments = response.data;
-        setAppointments(fetchedAppointments);
-  
-        // Convert appointments to schedules format
-        const newSchedules: Record<string, Schedule[]> = {};
-        fetchedAppointments.forEach((appointment: Appointment) => {
-          const date = appointment.scheduledDate;
-          if (!newSchedules[date]) {
-            newSchedules[date] = [];
+  const fetchAppointments = async (doctor?: string, date?: string) => {
+    try {
+      console.log('Fetching appointments for doctor:', doctor, 'and date:', date);
+      const params = new URLSearchParams();
+      if (doctor) params.append('doctor', doctor);
+      if (date) params.append('date', date);
+      
+      const url = `http://localhost:5000/schedule?${params.toString()}`;
+      console.log('Fetching from URL:', url);
+      
+      const response = await axios.get(url);
+      console.log('Received response:', response);
+      
+      if (!response.data) {
+        throw new Error('No data received from server');
+      }
+      
+      const fetchedAppointments = response.data;
+      console.log('Fetched appointments:', fetchedAppointments);
+      setAppointments(fetchedAppointments);
+
+      // Convert appointments to schedules format
+      const newSchedules: Record<string, Schedule[]> = {};
+      fetchedAppointments.forEach((appointment: Appointment) => {
+        // Only process appointments for the selected doctor
+        if (appointment.doctor === doctor) {
+          // Format the date to match the format we're using (YYYY-MM-DD)
+          const appointmentDate = new Date(appointment.scheduledDate);
+          const formattedDate = format(appointmentDate, "yyyy-MM-dd");
+          console.log('Processing appointment for doctor:', doctor, 'date:', formattedDate);
+          
+          if (!newSchedules[formattedDate]) {
+            newSchedules[formattedDate] = [];
           }
-          newSchedules[date].push({
+          newSchedules[formattedDate].push({
             time: appointment.appointmentTime,
             patient: appointment.fullName,
             procedure: appointment.procedureName,
             notes: appointment.note,
+            status: appointment.status || 'no status',
+            scheduleId: appointment.ScheduleID
           });
-        });
-        setSchedules(newSchedules);
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-        alert("Failed to fetch appointments. Please try again later.");
+        }
+      });
+      console.log('Processed schedules for doctor:', doctor, ':', newSchedules);
+      setSchedules(newSchedules);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          console.error('Error headers:', error.response.headers);
+          alert(`Failed to fetch appointments: ${error.response.data.error || error.response.data.details || 'Unknown error'}`);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+          alert('No response received from server. Please check if the server is running.');
+        } else {
+          console.error('Error setting up request:', error.message);
+          alert(`Error setting up request: ${error.message}`);
+        }
+      } else {
+        console.error('Unknown error:', error);
+        alert('An unexpected error occurred while fetching appointments.');
       }
-    };
-  
-    fetchAppointments();
-  }, []);
+    }
+  };
+
+  useEffect(() => {
+    console.log('useEffect triggered with doctor:', selectedDoctor, 'and date:', formattedSelectedDate);
+    if (selectedDoctor && formattedSelectedDate) {
+      fetchAppointments(selectedDoctor, formattedSelectedDate);
+    }
+  }, [selectedDoctor, formattedSelectedDate]);
+
+  // Add this console log to debug the current state
+  console.log('Current state:', {
+    selectedDoctor,
+    formattedSelectedDate,
+    schedules,
+    daySchedules,
+    selectedDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined
+  });
 
   const handleSubmit = async () => {
     if (!isFormValid) {
@@ -146,7 +195,8 @@ function Schedule({
       // Format time to HH:mm:ss
       const formattedTime = time ? `${time}:00` : "";
   
-      const newAppointment = {
+      const newAppointment: Appointment = {
+        ScheduleID: 0,
         fullName: fullName.trim(),
         birthday: formattedBirthday,
         sex: formattedSex,
@@ -154,6 +204,8 @@ function Schedule({
         appointmentTime: formattedTime,
         procedureName,
         note: note.trim(),
+        doctor: selectedDoctor || "Dr. Arnel Rivera",
+        status: "no status"
       };
   
       console.log("Sending data:", newAppointment);
@@ -165,14 +217,25 @@ function Schedule({
         alert("Appointment Scheduled Successfully!");
   
         // Update local state with new appointment
-        setAppointments((prevAppointments) => [...prevAppointments, newAppointment]);
+        const createdAppointment: Appointment = {
+          ...newAppointment,
+          ScheduleID: response.data.id
+        };
+        setAppointments((prevAppointments) => [...prevAppointments, createdAppointment]);
   
         // Update schedules state
         setSchedules((prevSchedules) => ({
           ...prevSchedules,
           [formattedScheduledDate]: [
             ...(prevSchedules[formattedScheduledDate] || []),
-            { time: formattedTime, patient: fullName, procedure: procedureName, notes: note },
+            {
+              time: formattedTime,
+              patient: fullName,
+              procedure: procedureName,
+              notes: note,
+              status: "no status",
+              scheduleId: response.data.id
+            },
           ],
         }));
   
@@ -187,12 +250,59 @@ function Schedule({
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while scheduling the appointment.");
+      if (axios.isAxiosError(error) && error.response) {
+        alert(`Failed to schedule appointment: ${error.response.data.error}`);
+      } else {
+        alert("An error occurred while scheduling the appointment.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleStatusChange = async (scheduleId: number, newStatus: string) => {
+    try {
+      console.log('Updating status for schedule:', scheduleId, 'to:', newStatus);
+      const response = await axios.put(`http://localhost:5000/schedule/${scheduleId}`, {
+        status: newStatus
+      });
+      
+      if (response.status === 200) {
+        console.log('Status update successful:', response.data);
+        // Update local state
+        setSchedules(prevSchedules => {
+          const newSchedules = { ...prevSchedules };
+          Object.keys(newSchedules).forEach(date => {
+            newSchedules[date] = newSchedules[date].map(schedule => {
+              if (schedule.scheduleId === scheduleId) {
+                return { ...schedule, status: newStatus };
+              }
+              return schedule;
+            });
+          });
+          return newSchedules;
+        });
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          alert(`Failed to update status: ${error.response.data.error || error.response.data.message || 'Unknown error'}`);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+          alert('No response received from server. Please check if the server is running.');
+        } else {
+          console.error('Error setting up request:', error.message);
+          alert(`Error setting up request: ${error.message}`);
+        }
+      } else {
+        console.error('Unknown error:', error);
+        alert('An unexpected error occurred while updating the status.');
+      }
+    }
+  };
 
   return (
     <div className="schedule">
@@ -201,7 +311,7 @@ function Schedule({
           <div className="left">
             <img src={user} />
             <div className="profile">
-              <Select>
+              <Select onValueChange={(value) => setSelectedDoctor(value)}>
                 <SelectTrigger className="name">
                   <SelectValue placeholder="Select a Doctor" />
                 </SelectTrigger>
@@ -219,7 +329,7 @@ function Schedule({
             <Popover>
               <PopoverTrigger asChild>
                 <Button className="text-[black] bg-[white] hover:text-[#5D6E7E] hover:bg-[#D9D9D9]">
-                <CalendarIcon /> {format(selectedDate || new Date(), "PPP")}
+                  <CalendarIcon /> {format(selectedDate || new Date(), "PPP")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="start">
@@ -232,13 +342,13 @@ function Schedule({
         <div className="body">
           <div className="table-container">
             <div className="table">
-              {daySchedules.length > 0 ? (
+              {daySchedules && daySchedules.length > 0 ? (
                 <Table>
                   <thead>
                     <tr>
-                      <th></th>
+                      <th>Status</th>
                       <th>Time</th>
-                      <th>Patient</th>
+                      <th>Patient Name</th>
                       <th>Procedure</th>
                       <th>Patient Notes</th>
                     </tr>
@@ -247,13 +357,18 @@ function Schedule({
                     {daySchedules.map((schedule, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Select>
-                            <SelectTrigger className="select-status"><SelectValue placeholder="No Status" /></SelectTrigger>
+                          <Select 
+                            value={schedule.status}
+                            onValueChange={(value) => handleStatusChange(schedule.scheduleId, value)}
+                          >
+                            <SelectTrigger className="select-status">
+                              <SelectValue placeholder={schedule.status} />
+                            </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectItem value="No Status">No Status</SelectItem>
-                                <SelectItem value="Done">Done</SelectItem>
-                                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                                <SelectItem value="no status">No Status</SelectItem>
+                                <SelectItem value="done">Done</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>

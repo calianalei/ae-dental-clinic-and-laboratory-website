@@ -44,6 +44,8 @@ function Login({ switchToSignup, switchToForgotPassword, onLogin }: AuthComponen
       if (response.ok) {
         localStorage.setItem('userToken', data.token); // Assuming the backend returns a token
         localStorage.setItem('userRole', 'patient');
+        localStorage.setItem('userData', JSON.stringify(data.user)); // Store the user data
+        localStorage.setItem('userEmail', email); // Store the user's email
         onLogin?.('patient'); // Call onLogin if it exists
         navigate('/patient'); 
       } else {
